@@ -1,18 +1,16 @@
 """
-	This interactive command application utility uses docopt with the
-	built in cmd module to 
-		Usage:
-			class_register student_add <firstname> <lastname>
-			class_register student_remove <student_id>
-			class_register class_list <class_id>
-			class_register class_add -s <subject>
-			class_register log_start <class_id>
-			class_register log_end <class_id>
-			class_register check_in <student_id> <class_id>
-			class_register check_out <student_id> <class_id> <reason>
-		Options:
-			-h, --help Show this screen and exit
-			--version Show version
+	Usage:
+		class_register student_add <firstname> <lastname>
+		class_register student_remove <student_id>
+		class_register class_list <class_id>
+		class_register class_add -s <subject>
+		class_register log_start <class_id>
+		class_register log_end <class_id>
+		class_register check_in <student_id> <class_id>
+		class_register check_out <student_id> <class_id> <reason>
+	Options:
+		-h, --help Show this screen and exit
+		--version Show version
 """
 
 from docopt import docopt, DocoptExit
@@ -53,12 +51,13 @@ class ClassRegister(cmd.Cmd):
 	prompt = "<class_register>"
 
 	# Student Commands
+	# This command creates a new student in the database and generate an id for the student
 	@docopt_cmd
 	def do_student_add(self, arg):
 		"""Usage: student_add <firstname> <lastname>"""
-		firstname = arg["<firstname>"]
-		lastname = arg["<lastname>"]
+		pass
 
+	# This command deletes a student based on the student_id.
 	@docopt_cmd
 	def do_student_remove(self, arg):
 		pass
@@ -73,35 +72,30 @@ class ClassRegister(cmd.Cmd):
 	@docopt_cmd
 	def do_class_add(self, arg):
 		"""Usage: class_add -s <subject> """
-
-		subject = arg["<subject>"]
-		c1 = Classes(subject)
-		c1.save_class()
+		pass
 
 	@docopt_cmd
 	def do_class_list(self, arg):
 		"""Usage: class_list """
-		ActiveSession.get_active_classes()
+		pass
 
 	# Log Commands
 	@docopt_cmd
 	def do_log_start(self, arg):
 		"""Usage: log_start <class_id> """
-		class_id = arg["<class_id>"]
-		ActiveSession.start_class(int(class_id))
+		pass
 
 	@docopt_cmd
 	def do_log_end(self, arg):
 		"""Usage: log_end <class_id> """
 		pass
 
+	# Check In/Out Student
 	@docopt_cmd
 	def do_check_in(self, arg):
 		"""Usage: check_in <student_id> <class_id>"""
-		student_id = arg["<student_id>"]
-		class_id = arg["<class_id>"]
-		ActiveSession.check_in_student(int(student_id), int(class_id))
-
+		pass
+	
 	@docopt_cmd
 	def do_check_out(self, arg):
 		"""Usage: check_out <student_id> <class_id> <reason>"""
