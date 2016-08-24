@@ -72,7 +72,9 @@ class ClassRegister(cmd.Cmd):
 	@docopt_cmd
 	def do_class_add(self, arg):
 		"""Usage: class_add -s <subject> """
-		pass
+		subject = arg["<subject>"]
+		c1 = Classes(subject)
+		c1.save_class()
 
 	@docopt_cmd
 	def do_class_list(self, arg):
@@ -95,7 +97,7 @@ class ClassRegister(cmd.Cmd):
 	def do_check_in(self, arg):
 		"""Usage: check_in <student_id> <class_id>"""
 		pass
-	
+
 	@docopt_cmd
 	def do_check_out(self, arg):
 		"""Usage: check_out <student_id> <class_id> <reason>"""
