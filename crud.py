@@ -78,9 +78,9 @@ class Classes(object):
 
 		if run_cursor.execute(add_subject_query):
 			connection.commit()
-			return str(self) + " saved!"
+			print(str(self) + " saved!")
 		else:
-			return "Error adding class!"
+			print("Error adding class!")
 
 	@staticmethod
 	def get_all_classes():
@@ -115,7 +115,7 @@ class Classes(object):
 	def __str__(self):
 		return "Class Subject: " + self.get_subject()
 
-class ClassInSession(object):
+class ActiveSession(object):
 	# dictionary to store: id: class_id, subject: subject, start_time, end_time]
 	active_classes = {}
 	# dictionary to store students in class: class_id [list_of_students]
@@ -128,7 +128,7 @@ class ClassInSession(object):
 		all_class_ids = Classes.get_all_class_ids()
 
 		if class_id in all_class_ids:
-			ClassInSession.active_classes[class_id] = [start_time]
+			ActiveSession.active_classes[class_id] = [start_time]
 			print("Class ID: " + str(class_id) + " started\n" \
 					+ "Start time: " + str(start_time))
 		else:
@@ -138,16 +138,16 @@ class ClassInSession(object):
 	@staticmethod
 	def check_in_student(student_id, class_id):
 		all_student_ids = Student.get_all_student_ids()
-		if class_id in ClassInSession.active_classes.keys():
+		if class_id in ActiveSession.active_classes.keys():
 			if student_id in all_student_ids:
-				# ClassInSession.students_in_class[class_id] = [student_id]
-				if class_id in ClassInSession.students_in_class.keys():
-					if student_id not in ClassInSession.students_in_class[class_id]:
-						ClassInSession.students_in_class[class_id].append(student_id)
+				# ActiveSession.students_in_class[class_id] = [student_id]
+				if class_id in ActiveSession.students_in_class.keys():
+					if student_id not in ActiveSession.students_in_class[class_id]:
+						ActiveSession.students_in_class[class_id].append(student_id)
 					else:
 						print("Student ID: " + str(student_id) + " already in that class!")
 				else:
-					ClassInSession.students_in_class[class_id] = [student_id]
+					ActiveSession.students_in_class[class_id] = [student_id]
 					print("Student ID: " + str(student_id) + " checked in to class " + str(class_id))
 			else:
 				print("Student ID: " + str(student_id) + " does not exist!")
@@ -157,8 +157,8 @@ class ClassInSession(object):
 
 	@staticmethod
 	def check_out_student(student_id, class_id, reason):
-		if class_id in ClassInSession.active_classes.keys():
-			students = ClassInSession.students_in_class[class_id]
+		if class_id in ActiveSession.active_classes.keys():
+			students = ActiveSession.students_in_class[class_id]
 			if student_id in students:
 				students.remove(student_id)
 			else:
@@ -169,20 +169,20 @@ class ClassInSession(object):
 
 	@staticmethod
 	def get_active_classes():
-		if not ClassInSession.active_classes.keys():
+		if not ActiveSession.active_classes.keys():
 			print('There are no active classes!')
 		else:
-			for class_id in ClassInSession.active_classes.keys():
+			for class_id in ActiveSession.active_classes.keys():
 				class_details = Classes.get_class_details(class_id)
 				# print(class_details)
 				for class_det in class_details:
 					print("In Session")
 					print("Class -> " + class_det)
 
-				start_time = ClassInSession.active_classes[class_id]
+				start_time = ActiveSession.active_classes[class_id]
 				print("\tStart Time: " + start_time[0])
 				print("\tStudents in this class")
-				students = ClassInSession.students_in_class[class_id]
+				students = ActiveSession.students_in_class[class_id]
 				for student_id in students:
 					# print("\t" + "-" * 20)
 					print("\tStudent ID: " + str(student_id))
@@ -192,25 +192,29 @@ class ClassInSession(object):
 	@staticmethod
 	def end_class(class_id):
 		end_time = time.asctime(time.localtime(time.time()))
-		if class_id in ClassInSession.active_classes.keys():
-			ClassInSession.active_classes.pop(class_id)
+		if class_id in ActiveSession.active_classes.keys():
+			ActiveSession.active_classes.pop(class_id)
 			print("Class ID -> " + str(class_id) + " ended!")
 			print("End Time: " + end_time)
 
+	@staticmethod
+	def get_students_in_class():
+		pass
+
 			
 def main():
-	ClassInSession.start_class(1)
-	ClassInSession.start_class(2)
+	ActiveSession.start_class(1)
+	ActiveSession.start_class(2)
 	print("")
-	ClassInSession.check_in_student(1,1)
-	ClassInSession.check_in_student(2,1)
-	ClassInSession.check_in_student(3,2)
+	ActiveSession.check_in_student(1,1)
+	ActiveSession.check_in_student(2,1)
+	ActiveSession.check_in_student(3,2)
 	print("")
-	ClassInSession.get_active_classes()
+	ActiveSession.get_active_classes()
 	print("")
-	# ClassInSession.end_class(1)
-	# ClassInSession.get_active_classes()
+	# ActiveSession.end_class(1)
+	# ActiveSession.get_active_classes()
 
 
-if __name__ == "__main__":
-	main()
+# if __name__ == "__main__":
+# 	main()
