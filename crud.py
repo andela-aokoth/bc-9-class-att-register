@@ -6,35 +6,22 @@ run_cursor = connection.cursor()
 
 class Student(object):
 	def __init__(self, firstname, lastname):
-		self.set_firstname(firstname)
-		self.set_lastname(lastname)
-
-	def set_firstname(self, firstname):
 		self.firstname = firstname
-
-	def set_lastname(self,lastname):
 		self.lastname = lastname
 
-	def get_firstname(self): 
-		return self.firstname
-
-	def get_lastname(self):
-		return self.lastname
 
 	def save_student(self):
-		firstname = self.get_firstname()
-		lastname = self.get_lastname()
-
 		add_student_query = '''
 		INSERT INTO students (first_name, last_name)
 		VALUES ('{first_name}', '{last_name}')
-		'''.format(first_name=firstname, last_name=lastname)
+		'''.format(first_name=self.firstname, last_name=self.lastname)
 
 		if run_cursor.execute(add_student_query):
 			connection.commit()
 			return "Student\n" + str(self) + " saved!"
 		else:
 			return "Error adding student!"
+
 
 	@staticmethod
 	def get_all_students():
@@ -55,32 +42,28 @@ class Student(object):
 			return student_ids
 
 	def __str__(self):
-		return "First Name: " + self.get_firstname() \
-				+ ", Last Name: " + str(self.get_lastname())
+		return "First Name: " + self.firstname \
+				+ ", Last Name: " + str(self.lastname)
 
 
 class Classes(object):
 	def __init__(self, subject):
-		self.set_subject(subject)
-
-	def set_subject(self, subject):
 		self.subject = subject
 
-	def get_subject(self):
-		return self.subject
 
 	def save_class(self):
-		subject = self.get_subject()
+		subject = self.subject
 		add_subject_query = '''
 		INSERT INTO classes (subject)
 		VALUES ('{subject}')
-		'''.format(subject=subject)
+		'''.format(subject=self.subject)
 
 		if run_cursor.execute(add_subject_query):
 			connection.commit()
-			print(str(self) + " saved!")
+			return str(self) + " saved!"
 		else:
-			print("Error adding class!")
+			return "Error adding class!"
+
 
 	@staticmethod
 	def get_all_classes():
@@ -92,6 +75,7 @@ class Classes(object):
 			classes = [row[0] for row in run_cursor.fetchall()]
 			return classes
 
+
 	@staticmethod
 	def get_all_class_ids():
 		get_all_class_ids_query = '''
@@ -101,6 +85,7 @@ class Classes(object):
 			class_ids = [row[0] for row in run_cursor.fetchall()]
 			return class_ids
 	
+
 	@staticmethod
 	def get_class_details(class_id):
 		get_class_details_query = '''
@@ -113,12 +98,13 @@ class Classes(object):
 
 
 	def __str__(self):
-		return "Class Subject: " + self.get_subject()
+		return "Class Subject: " + self.subject
+
 
 class ActiveSession(object):
-	# dictionary to store: id: class_id, subject: subject, start_time, end_time]
+	# dictionary to store; class_id: [start_time]
 	active_classes = {}
-	# dictionary to store students in class: class_id [list_of_students]
+	# dictionary to store students in class; class_id: [list_of_students]
 	students_in_class = {}
 
 	@staticmethod
@@ -132,7 +118,7 @@ class ActiveSession(object):
 			print("Class ID: " + str(class_id) + " started\n" \
 					+ "Start time: " + str(start_time))
 		else:
-			return "The class " + str(class_id) + " does not exist!"
+			print("The class " + str(class_id) + " does not exist!")
 
 
 	@staticmethod
@@ -140,7 +126,6 @@ class ActiveSession(object):
 		all_student_ids = Student.get_all_student_ids()
 		if class_id in ActiveSession.active_classes.keys():
 			if student_id in all_student_ids:
-				# ActiveSession.students_in_class[class_id] = [student_id]
 				if class_id in ActiveSession.students_in_class.keys():
 					if student_id not in ActiveSession.students_in_class[class_id]:
 						ActiveSession.students_in_class[class_id].append(student_id)
@@ -180,13 +165,11 @@ class ActiveSession(object):
 					print("Class -> " + class_det)
 
 				start_time = ActiveSession.active_classes[class_id]
-				print("\tStart Time: " + start_time[0])
+				print("Start Time: " + start_time[0])
 				print("\tStudents in this class")
 				students = ActiveSession.students_in_class[class_id]
 				for student_id in students:
-					# print("\t" + "-" * 20)
 					print("\tStudent ID: " + str(student_id))
-					# print("\t" + "-" * 20)
 
 
 	@staticmethod
@@ -197,12 +180,15 @@ class ActiveSession(object):
 			print("Class ID -> " + str(class_id) + " ended!")
 			print("End Time: " + end_time)
 
+
 	@staticmethod
 	def get_students_in_class():
 		pass
 
 			
 def main():
+	s1 = Student("Arnold", "Okoth")
+	c1 = Classes("Introduction to Programming")
 	ActiveSession.start_class(1)
 	ActiveSession.start_class(2)
 	print("")
@@ -216,5 +202,5 @@ def main():
 	# ActiveSession.get_active_classes()
 
 
-# if __name__ == "__main__":
-# 	main()
+if __name__ == "__main__":
+	main()
