@@ -3,6 +3,7 @@ import sqlite3, datetime
 connection = sqlite3.connect('register.db')
 run_cursor = connection.cursor()
 
+
 class Student(object):
 	def __init__(self, firstname, lastname):
 		self.set_firstname(firstname)
@@ -62,7 +63,7 @@ class Classes(object):
 		subject = self.get_subject()
 		add_subject_query = '''
 		INSERT INTO classes (subject)
-		VALUES ('{subject}'})
+		VALUES ('{subject}')
 		'''.format(subject=subject)
 
 		if run_cursor.execute(add_subject_query):
@@ -83,6 +84,29 @@ class Classes(object):
 	def __str__(self):
 		return "Class Subject: " + self.get_subject()
 
-
 class ClassInSession(object):
-	
+	# dictionary to store: class_id: [subject, start_time, end_time]
+	active_classes = {}
+	# dictionary to store students in class: class_id [list_of_students]
+	students_in_class = {}
+
+	@staticmethod
+	def start_class(class_id):
+		get_class_subject_query = '''
+		SELECT subject FROM classes WHERE class_id = {class_id}
+		'''.format(class_id=class_id)
+
+		if run_cursor.execute(get_class_subject_query):
+			class_subject = run_cursor.fetchall()
+			return class_subject[0]
+		else:
+			return 'The class ' + str(class_id) + " does not exist!"
+
+
+def main():
+	print(ClassInSession.start_class(1))
+
+
+if __name__ == '__main__':
+	main()
+
