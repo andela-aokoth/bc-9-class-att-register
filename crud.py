@@ -1,4 +1,5 @@
 import sqlite3, datetime, time
+import crud_alchemy
 
 connection = sqlite3.connect("register.db")
 run_cursor = connection.cursor()
@@ -143,7 +144,7 @@ class ActiveSession(object):
 	def start_class(class_id):
 		start_time = time.asctime(time.localtime(time.time()))
 
-		all_class_ids = Classes.get_all_class_ids()
+		all_class_ids = crud_alchemy.get_all_class_ids()
 		if class_id in all_class_ids:
 			ActiveSession.active_classes[class_id] = start_time
 			print("Class ID: " + str(class_id) + " started\n" \
@@ -154,22 +155,25 @@ class ActiveSession(object):
 
 	@staticmethod
 	def check_in_student(student_id, class_id):
-		all_student_ids = Student.get_all_student_ids()
-		# print(ActiveSession.active_classes)
-		if class_id in ActiveSession.active_classes.keys():
-			if student_id in all_student_ids:
-				if class_id in ActiveSession.students_in_class.keys():
-					if student_id not in ActiveSession.students_in_class[class_id]:
-						ActiveSession.students_in_class[class_id].append(student_id)
-					else:
-						return "Student ID: " + str(student_id) + " already in that class!"
+		all_student_ids = crud_alchemy.get_all_student_ids()
+		student_ids_in_class = []
+		for class_id in  ActiveSession.students_in_class.keys():
+			student_list = ActiveSession.students_in_class[class_id]
+			for student in student_list:
+				student_ids_in_class.append(student)
+
+		if class_id in ActiveSession.active_classes.keys() and student_id in all_student_ids:
+			if class_id in ActiveSession.students_in_class.keys():
+				if student_id not in student_ids_in_class:
+					ActiveSession.students_in_class[class_id].append(student_id)
 				else:
-					ActiveSession.students_in_class[class_id] = [student_id]
-					return "Student ID: " + str(student_id) + " checked in to class " + str(class_id)
+					return "Student ID: " + str(student_id) + " already in a class!"
 			else:
-				return "Student ID: " + str(student_id) + " does not exist!"
+				ActiveSession.students_in_class[class_id] = [student_id]
+				return "Student ID: " + str(student_id) + " checked in to class " + str(class_id)
+			
 		else:
-			return "Class ID: " + str(class_id) + " is not in session!"
+			return "Class ID/Student ID" + str(class_id) + "does not exist!"
 
 
 	@staticmethod
@@ -188,22 +192,22 @@ class ActiveSession(object):
 
 	@staticmethod
 	def get_all_classes():
-		all_classes = Classes.get_all_classes()
+		all_classes = crud_alchemy.get_all_classes()
 		# print(all_classes)
-		print("-"*42)
-		print("Class ID".ljust(15) + "Subject".ljust(15))
-		print("-"*42)
+		print("\t" + "-"*42)
+		print("\tCLASS ID".ljust(15) + "SUBJECT".ljust(16))
+		print("\t" +"-"*42)
 		for a_class in all_classes:
-			print(str(a_class[0]).ljust(15) + str(a_class[1].ljust(15)))
+			print("\t" + str(a_class[0]).ljust(15) + str(a_class[1].ljust(16)))
 
 
 	@staticmethod
 	def get_active_classes():
 		if not ActiveSession.active_classes.keys():
-			print('There are no active classes!')
+			print('\tThere are no active classes!')
 		else:
 			for class_id in ActiveSession.active_classes.keys():
-				class_details = Classes.get_class_details(class_id)
+				class_details = crud_alchemy.get_class_details(class_id)
 				# print(class_details)
 				for class_det in class_details:
 					print("In Session")
@@ -230,7 +234,7 @@ class ActiveSession(object):
 
 	@staticmethod
 	def get_students_in_class():
-		all_student_ids = Student.get_all_student_ids()
+		all_student_ids = crud_alchemy.get_all_student_ids()
 		student_ids_in_class = []
 		
 		for class_id in  ActiveSession.students_in_class.keys():
@@ -242,7 +246,7 @@ class ActiveSession(object):
 		print("Student ID".ljust(15) + "First Name".ljust(15) + "Last Name".ljust(15) + "In Class".ljust(15))
 		print("-"*55)
 		for stud_id in all_student_ids:
-			student_details = Student.get_student_details(stud_id)
+			student_details = crud_alchemy.get_student_details(stud_id)
 			# print( student_details[0][1])
 			if stud_id not in student_ids_in_class:
 				print(str(stud_id).ljust(15) \
@@ -255,29 +259,14 @@ class ActiveSession(object):
 					+ student_details[0][1].ljust(15) \
 					+ "Yes".ljust(15))
 
-			
+
 def main():
-	pass
-	# ActiveSession.start_class(1)
-	# s1 = Student("Arnold", "Okoth")
-	# print(s1)
-	# print(str(s1))
-	# print(dir(s1))
-	# c1 = Classes("Introduction to Programming")
-	# ActiveSession.start_class(1)
-	# ActiveSession.start_class(2)
-	# print("")
-	# ActiveSession.check_in_student(1,1)
-	# ActiveSession.check_in_student(2,1)
-	# ActiveSession.check_in_student(3,2)
-	# print("")
-	# ActiveSession.get_active_classes()
-	# print("")
-	# ActiveSession.get_students_in_class()
-	# ActiveSession.end_class(1)
-	# ActiveSession.get_active_classes()
-	# ActiveSession.get_all_classes()
+	ActiveSession.get_all_classes() # good
+	ActiveSession.start_class(1) # good
+	ActiveSession.get_active_classes() # good
+	ActiveSession.get_students_in_class()
 
 
-# if __name__ == "__main__":
-# 	main()
+
+if __name__ == '__main__':
+	main()

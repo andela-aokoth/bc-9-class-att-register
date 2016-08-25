@@ -2,20 +2,24 @@
 	Usage:
 		class_register student_add <firstname> <lastname>
 		class_register student_remove <student_id>
+		class_register student_list
 		class_register class_list <class_id>
-		class_register class_add -s <subject>
+		class_register class_list_all
+		class_register class_add <subject>...
 		class_register log_start <class_id>
 		class_register log_end <class_id>
 		class_register check_in <student_id> <class_id>
 		class_register check_out <student_id> <class_id> <reason>
+		class_registe quit
 	Options:
-		-h, --help Show this screen and exit
-		--version Show version
+		-h, --help  Show this screen and exit
+		--version  Show version
 """
 
 from docopt import docopt, DocoptExit
 import cmd
 from crud import Student, Classes, ActiveSession
+import crud_alchemy
 
 def docopt_cmd(func):
 	"""
@@ -47,6 +51,19 @@ def docopt_cmd(func):
 	return fn
 
 
+def introduction():
+	print("Command".upper().ljust(20) + "Purpose".upper().ljust(20))
+	print("1. student_add:".ljust(20) + "adds a new student to the database".ljust(20))
+	print("2. student_remove:".ljust(20) + "deletes a student from the database".ljust(20))
+	print("3. student_list:".ljust(20) + "lists all students and if they're in class".ljust(20))
+	print("3. class_list_all:".ljust(20) + "lists all classes stored in the database".ljust(20))
+	print("4. class_list:".ljust(20) + "prints out a list of active classes".ljust(20))
+	print("5. class_list_all:".ljust(20) + "lists all classes in the database".ljust(20))
+	print("6. log_start:".ljust(20) + "starts the passed class_id")
+	print("7. log_end:".ljust(20) + "ends a time log for an active class")
+	print("8. check_in:".ljust(20) + "checks in a student to an active class")
+	print("9. check_out:".ljust(20) + "checks out a student from an active class")
+
 class ClassRegister(cmd.Cmd):
 	prompt = "<class_register>"
 
@@ -57,15 +74,14 @@ class ClassRegister(cmd.Cmd):
 		"""Usage: student_add <firstname> <lastname>"""
 		firstname = arg["<firstname>"]
 		lastname = arg["<lastname>"]
-		s1 = Student(firstname, lastname)
-		print(s1.save_student())
+		print(crud_alchemy.save_student(firstname, lastname))
 
 	# This command deletes a student based on the student_id.
 	@docopt_cmd
 	def do_student_remove(self, arg):
 		"""Usage: student_remove <student_id>"""
 		student_id = arg["<student_id>"]
-		print(Student.delete_student(student_id))
+		print(crud_alchemy.delete_student(student_id))
 
 	# List all the students and if they're currently in a class
 	@docopt_cmd
@@ -76,10 +92,15 @@ class ClassRegister(cmd.Cmd):
 	# Class Commands
 	@docopt_cmd
 	def do_class_add(self, arg):
-		"""Usage: class_add -s <subject> """
+		"""Usage: class_add <subject>... """
+		# import ipdb
+		# ipdb.set_trace()
 		subject = arg["<subject>"]
-		c1 = Classes(subject)
-		c1.save_class()
+		subject_name = ''
+		for word in subject:
+			subject_name += word + ' '
+		current_class = Classes(subject_name)
+		print(current_class.save_class())
 
 	@docopt_cmd
 	def do_class_remove(self, arg):
@@ -126,6 +147,12 @@ class ClassRegister(cmd.Cmd):
 		reason = arg["<reason>"]
 		ActiveSession.check_out_student(int(student_id), int(class_id), reason)
 
+	@docopt_cmd
+	def do_quit(self, arg):
+		"""Usage: quit"""
+		print("Goodbye! ")
+		exit()
 
 if __name__ == "__main__":
+	introduction()
 	ClassRegister().cmdloop()
