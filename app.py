@@ -1,16 +1,24 @@
 """
-	Usage:
-		class_register student_add <firstname> <lastname>
-		class_register student_remove <student_id>
-		class_register student_list
-		class_register class_list <class_id>
-		class_register class_list_all
-		class_register class_add <subject>...
-		class_register log_start <class_id>
-		class_register log_end <class_id>
-		class_register check_in <student_id> <class_id>
-		class_register check_out <student_id> <class_id> <reason>
-		class_registe quit
+	Commands:
+		student_add <firstname> <lastname>
+		student_remove <student_id>
+		student_list
+		class_list <class_id>
+		class_list_all
+		class_add <subject>...
+		log_start <class_id>
+		log_end <class_id>
+		check_in <student_id> <class_id>
+		check_out <student_id> <class_id> <reason>
+		quit
+
+	Arguments:
+		<firstname> Student First Name
+		<lastname> Student Last Name
+		<student_id> Student ID Number
+		<class_id> Class ID Number
+		<subject> Subject taught during a specific class
+		<reason> Reason provided for checking out a student from class
 	Options:
 		-h, --help  Show this screen and exit
 		--version  Show version
@@ -18,7 +26,7 @@
 
 from docopt import docopt, DocoptExit
 import cmd
-from crud import Student, Classes, ActiveSession
+from active_session import ActiveSession
 import crud_alchemy
 
 def docopt_cmd(func):
@@ -52,17 +60,18 @@ def docopt_cmd(func):
 
 
 def introduction():
-	print("Command".upper().ljust(20) + "Purpose".upper().ljust(20))
-	print("1. student_add:".ljust(20) + "adds a new student to the database".ljust(20))
-	print("2. student_remove:".ljust(20) + "deletes a student from the database".ljust(20))
-	print("3. student_list:".ljust(20) + "lists all students and if they're in class".ljust(20))
-	print("3. class_list_all:".ljust(20) + "lists all classes stored in the database".ljust(20))
-	print("4. class_list:".ljust(20) + "prints out a list of active classes".ljust(20))
-	print("5. class_list_all:".ljust(20) + "lists all classes in the database".ljust(20))
-	print("6. log_start:".ljust(20) + "starts the passed class_id")
-	print("7. log_end:".ljust(20) + "ends a time log for an active class")
-	print("8. check_in:".ljust(20) + "checks in a student to an active class")
-	print("9. check_out:".ljust(20) + "checks out a student from an active class")
+	print(__doc__)
+	# print("Command".upper().ljust(20) + "Purpose".upper().ljust(20))
+	# print("student_add <firstname> <lastname> ".ljust(20) + "adds a new student to the database".ljust(20))
+	# print("student_remove <student_id> ".ljust(20) + "deletes a student from the database".ljust(20))
+	# print("student_list ".ljust(20) + "lists all students and if they're in class".ljust(20))
+	# print("class_list_all:".ljust(20) + "lists all classes stored in the database".ljust(20))
+	# print("class_list:".ljust(20) + "prints out a list of active classes".ljust(20))
+	# print("class_list_all:".ljust(20) + "lists all classes in the database".ljust(20))
+	# print("log_start:".ljust(20) + "starts the passed class_id")
+	# print("log_end:".ljust(20) + "ends a time log for an active class")
+	# print("check_in:".ljust(20) + "checks in a student to an active class")
+	# print("check_out:".ljust(20) + "checks out a student from an active class")
 
 class ClassRegister(cmd.Cmd):
 	prompt = "<class_register>"
