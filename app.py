@@ -82,6 +82,12 @@ class ClassRegister(cmd.Cmd):
 		c1.save_class()
 
 	@docopt_cmd
+	def do_class_remove(self, arg):
+		"""Usage: class_remove <class_id>"""
+		class_id = arg["<class_id>"]
+		print(Classes.delete_class(class_id))
+
+	@docopt_cmd
 	def do_class_list_all(self, arg):
 		"""Usage: class_list_all """
 		ActiveSession.get_all_classes()
