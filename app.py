@@ -114,7 +114,9 @@ class ClassRegister(cmd.Cmd):
 	@docopt_cmd
 	def do_check_in(self, arg):
 		"""Usage: check_in <student_id> <class_id>"""
-		pass
+		student_id = arg["<student_id>"]
+		class_id = arg["<class_id>"]
+		ActiveSession.check_in_student(int(student_id), int(class_id))
 
 	@docopt_cmd
 	def do_check_out(self, arg):
