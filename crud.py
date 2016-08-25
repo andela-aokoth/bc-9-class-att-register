@@ -13,15 +13,26 @@ class Student(object):
 	def save_student(self):
 		add_student_query = '''
 		INSERT INTO students (first_name, last_name)
-		VALUES ('{first_name}', '{last_name}')
-		'''.format(first_name=self.firstname, last_name=self.lastname)
+		VALUES ('{0}', '{1}')
+		'''.format(self.firstname, self.lastname)
 
 		if run_cursor.execute(add_student_query):
 			connection.commit()
 			return "Student\n" + str(self) + " saved!"
-		else:
-			return "Error adding student!"
+		return "Error adding student!"
 
+
+	@staticmethod
+	def delete_student(student_id):
+		delete_student_query = '''
+		DELETE FROM students WHERE
+		student_id = {0}
+		'''.format(student_id)
+
+		if run_cursor.execute(delete_student_query):
+			connection.commit()
+			return "Student " + str(student_id) + " deleted!"
+		return "Error deleting student!"
 
 	@staticmethod
 	def get_all_students():
@@ -31,6 +42,17 @@ class Student(object):
 		if run_cursor.execute(get_all_students_query):
 			students = run_cursor.fetchall()
 			return students
+
+	@staticmethod
+	def get_student_details(student_id):
+		get_student_details_query = '''
+		SELECT first_name, last_name
+		FROM students WHERE student_id = {0}
+		'''.format(student_id)
+
+		if run_cursor.execute(get_student_details_query):
+			student_details = run_cursor.fetchall()
+			return student_details
 
 	@staticmethod
 	def get_all_student_ids():
@@ -55,14 +77,13 @@ class Classes(object):
 		subject = self.subject
 		add_subject_query = '''
 		INSERT INTO classes (subject)
-		VALUES ('{subject}')
-		'''.format(subject=self.subject)
+		VALUES ('{0}')
+		'''.format(self.subject)
 
 		if run_cursor.execute(add_subject_query):
 			connection.commit()
 			return str(self) + " saved!"
-		else:
-			return "Error adding class!"
+		return "Error adding class!"
 
 
 	@staticmethod
@@ -89,8 +110,8 @@ class Classes(object):
 	@staticmethod
 	def get_class_details(class_id):
 		get_class_details_query = '''
-		SELECT subject FROM classes WHERE class_id = {class_id}
-		'''.format(class_id=class_id)
+		SELECT subject FROM classes WHERE class_id = {0}
+		'''.format(class_id)
 
 		if run_cursor.execute(get_class_details_query):
 			class_details = [row[0] for row in run_cursor.fetchall()]
@@ -166,8 +187,9 @@ class ActiveSession(object):
 
 				start_time = ActiveSession.active_classes[class_id]
 				print("Start Time: " + start_time[0])
-				print("\tStudents in this class")
 				students = ActiveSession.students_in_class[class_id]
+				print("Number of students: " + str(len(students)))
+				print("\tStudents in this class")
 				for student_id in students:
 					print("\tStudent ID: " + str(student_id))
 
@@ -183,7 +205,31 @@ class ActiveSession(object):
 
 	@staticmethod
 	def get_students_in_class():
-		pass
+		all_student_ids = Student.get_all_student_ids()
+		student_ids_in_class = []
+		
+		for class_id in  ActiveSession.students_in_class.keys():
+			student_list = ActiveSession.students_in_class[class_id]
+			for student in student_list:
+				student_ids_in_class.append(student)
+		
+		print("-"*55)
+		print("Student ID".ljust(15) + "First Name".ljust(15) + "Last Name".ljust(15) + "In Class".ljust(15))
+		print("-"*55)
+		for stud_id in all_student_ids:
+			student_details = Student.get_student_details(stud_id)
+			# print( student_details[0][1])
+			if stud_id not in student_ids_in_class:
+				print(str(stud_id).ljust(15) \
+					+ student_details[0][0].ljust(15) \
+				 	+ student_details[0][1].ljust(15) \
+				 	+ "No".ljust(15))
+			else:
+				print(str(stud_id).ljust(15) \
+					+ student_details[0][0].ljust(15) \
+					+ student_details[0][1].ljust(15) \
+					+ "Yes".ljust(15))
+
 
 			
 def main():
@@ -198,6 +244,7 @@ def main():
 	print("")
 	ActiveSession.get_active_classes()
 	print("")
+	ActiveSession.get_students_in_class()
 	# ActiveSession.end_class(1)
 	# ActiveSession.get_active_classes()
 

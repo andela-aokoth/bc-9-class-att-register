@@ -55,18 +55,22 @@ class ClassRegister(cmd.Cmd):
 	@docopt_cmd
 	def do_student_add(self, arg):
 		"""Usage: student_add <firstname> <lastname>"""
-		pass
+		firstname = arg["<firstname>"]
+		lastname = arg["<lastname>"]
+		s1 = Student(firstname, lastname)
+		print(s1.save_student())
 
 	# This command deletes a student based on the student_id.
 	@docopt_cmd
 	def do_student_remove(self, arg):
+		"""Usage: student_remove <student_id>"""
 		pass
 
 	# List all the students and if they're currently in a class
 	@docopt_cmd
 	def do_student_list(self, arg):
 		"""Usage: student_list """
-		pass
+		ActiveSession.get_students_in_class()
 
 	# Class Commands
 	@docopt_cmd
