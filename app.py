@@ -101,12 +101,14 @@ class ClassRegister(cmd.Cmd):
 	@docopt_cmd
 	def do_log_start(self, arg):
 		"""Usage: log_start <class_id> """
-		pass
+		class_id = arg["<class_id>"]
+		ActiveSession.start_class(int(class_id))
 
 	@docopt_cmd
 	def do_log_end(self, arg):
 		"""Usage: log_end <class_id> """
-		pass
+		class_id = arg["<class_id>"]
+		ActiveSession.end_class(int(class_id))
 
 	# Check In/Out Student
 	@docopt_cmd

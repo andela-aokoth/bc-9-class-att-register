@@ -32,7 +32,7 @@ class Student(object):
 		if run_cursor.execute(delete_student_query):
 			connection.commit()
 			return "Student " + str(student_id) + " deleted!"
-		return "Error deleting student!"
+		return "Error deleting student ID: " + str(student_id)
 
 	@staticmethod
 	def get_all_students():
@@ -85,6 +85,17 @@ class Classes(object):
 			return str(self) + " saved!"
 		return "Error adding class!"
 
+	@staticmethod
+	def delete_class(class_id):
+		delete_class_query = '''
+		DELETE FROM classes
+		WHERE class_id = {0}
+		'''.format(class_id)
+
+		if run_cursor.execute(delete_class_query):
+			connection.commit()
+			return str(class_id) + " deleted!"
+		return "Error deleting class ID: " + str(class_id)
 
 	@staticmethod
 	def get_all_classes():
@@ -123,7 +134,7 @@ class Classes(object):
 
 
 class ActiveSession(object):
-	# dictionary to store; class_id: [start_time]
+	# dictionary to store; class_id: start_time
 	active_classes = {}
 	# dictionary to store students in class; class_id: [list_of_students]
 	students_in_class = {}
@@ -133,9 +144,8 @@ class ActiveSession(object):
 		start_time = time.asctime(time.localtime(time.time()))
 
 		all_class_ids = Classes.get_all_class_ids()
-
 		if class_id in all_class_ids:
-			ActiveSession.active_classes[class_id] = [start_time]
+			ActiveSession.active_classes[class_id] = start_time
 			print("Class ID: " + str(class_id) + " started\n" \
 					+ "Start time: " + str(start_time))
 		else:
@@ -183,7 +193,7 @@ class ActiveSession(object):
 		for a_class in all_classes:
 			print(str(a_class[0]).ljust(15) + str(a_class[1].ljust(15)))
 
-	
+
 	@staticmethod
 	def get_active_classes():
 		if not ActiveSession.active_classes.keys():
@@ -197,12 +207,13 @@ class ActiveSession(object):
 					print("Class -> " + class_det)
 
 				start_time = ActiveSession.active_classes[class_id]
-				print("Start Time: " + start_time[0])
-				students = ActiveSession.students_in_class[class_id]
-				print("Number of students: " + str(len(students)))
-				print("\tStudents in this class")
-				for student_id in students:
-					print("\tStudent ID: " + str(student_id))
+				print("Start Time: " + start_time)
+				if class_id in ActiveSession.students_in_class.keys():
+					students = ActiveSession.students_in_class[class_id]
+					print("Number of students: " + str(len(students)))
+					print("\tStudents in this class")
+					for student_id in students:
+						print("\tStudent ID: " + str(student_id))
 
 
 	@staticmethod
@@ -243,7 +254,12 @@ class ActiveSession(object):
 
 			
 def main():
+	pass
+	# ActiveSession.start_class(1)
 	# s1 = Student("Arnold", "Okoth")
+	# print(s1)
+	# print(str(s1))
+	# print(dir(s1))
 	# c1 = Classes("Introduction to Programming")
 	# ActiveSession.start_class(1)
 	# ActiveSession.start_class(2)
@@ -257,8 +273,8 @@ def main():
 	# ActiveSession.get_students_in_class()
 	# ActiveSession.end_class(1)
 	# ActiveSession.get_active_classes()
-	ActiveSession.get_all_classes()
+	# ActiveSession.get_all_classes()
 
 
-if __name__ == "__main__":
-	main()
+# if __name__ == "__main__":
+# 	main()
