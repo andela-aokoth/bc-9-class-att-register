@@ -82,9 +82,14 @@ class ClassRegister(cmd.Cmd):
 		c1.save_class()
 
 	@docopt_cmd
+	def do_class_list_all(self, arg):
+		"""Usage: class_list_all """
+		ActiveSession.get_all_classes()
+
+	@docopt_cmd
 	def do_class_list(self, arg):
 		"""Usage: class_list """
-		pass
+		ActiveSession.get_active_classes()
 
 	# Log Commands
 	@docopt_cmd

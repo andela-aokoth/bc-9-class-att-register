@@ -93,7 +93,7 @@ class Classes(object):
 		'''
 
 		if run_cursor.execute(get_all_classes_query):
-			classes = [row[0] for row in run_cursor.fetchall()]
+			classes = run_cursor.fetchall()
 			return classes
 
 
@@ -174,6 +174,17 @@ class ActiveSession(object):
 
 
 	@staticmethod
+	def get_all_classes():
+		all_classes = Classes.get_all_classes()
+		# print(all_classes)
+		print("-"*42)
+		print("Class ID".ljust(15) + "Subject".ljust(15))
+		print("-"*42)
+		for a_class in all_classes:
+			print(str(a_class[0]).ljust(15) + str(a_class[1].ljust(15)))
+
+	
+	@staticmethod
 	def get_active_classes():
 		if not ActiveSession.active_classes.keys():
 			print('There are no active classes!')
@@ -230,23 +241,23 @@ class ActiveSession(object):
 					+ student_details[0][1].ljust(15) \
 					+ "Yes".ljust(15))
 
-
 			
 def main():
-	s1 = Student("Arnold", "Okoth")
-	c1 = Classes("Introduction to Programming")
-	ActiveSession.start_class(1)
-	ActiveSession.start_class(2)
-	print("")
-	ActiveSession.check_in_student(1,1)
-	ActiveSession.check_in_student(2,1)
-	ActiveSession.check_in_student(3,2)
-	print("")
-	ActiveSession.get_active_classes()
-	print("")
-	ActiveSession.get_students_in_class()
+	# s1 = Student("Arnold", "Okoth")
+	# c1 = Classes("Introduction to Programming")
+	# ActiveSession.start_class(1)
+	# ActiveSession.start_class(2)
+	# print("")
+	# ActiveSession.check_in_student(1,1)
+	# ActiveSession.check_in_student(2,1)
+	# ActiveSession.check_in_student(3,2)
+	# print("")
+	# ActiveSession.get_active_classes()
+	# print("")
+	# ActiveSession.get_students_in_class()
 	# ActiveSession.end_class(1)
 	# ActiveSession.get_active_classes()
+	ActiveSession.get_all_classes()
 
 
 if __name__ == "__main__":
