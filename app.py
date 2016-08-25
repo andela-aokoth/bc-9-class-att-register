@@ -64,7 +64,8 @@ class ClassRegister(cmd.Cmd):
 	@docopt_cmd
 	def do_student_remove(self, arg):
 		"""Usage: student_remove <student_id>"""
-		pass
+		student_id = arg["<student_id>"]
+		print(Student.delete_student(student_id))
 
 	# List all the students and if they're currently in a class
 	@docopt_cmd
