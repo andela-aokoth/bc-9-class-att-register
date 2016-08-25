@@ -155,20 +155,21 @@ class ActiveSession(object):
 	@staticmethod
 	def check_in_student(student_id, class_id):
 		all_student_ids = Student.get_all_student_ids()
+		# print(ActiveSession.active_classes)
 		if class_id in ActiveSession.active_classes.keys():
 			if student_id in all_student_ids:
 				if class_id in ActiveSession.students_in_class.keys():
 					if student_id not in ActiveSession.students_in_class[class_id]:
 						ActiveSession.students_in_class[class_id].append(student_id)
 					else:
-						print("Student ID: " + str(student_id) + " already in that class!")
+						return "Student ID: " + str(student_id) + " already in that class!"
 				else:
 					ActiveSession.students_in_class[class_id] = [student_id]
-					print("Student ID: " + str(student_id) + " checked in to class " + str(class_id))
+					return "Student ID: " + str(student_id) + " checked in to class " + str(class_id)
 			else:
-				print("Student ID: " + str(student_id) + " does not exist!")
+				return "Student ID: " + str(student_id) + " does not exist!"
 		else:
-			print("Class ID: " + str(class_id) + " is not in session!")
+			return "Class ID: " + str(class_id) + " is not in session!"
 
 
 	@staticmethod
@@ -176,6 +177,8 @@ class ActiveSession(object):
 		if class_id in ActiveSession.active_classes.keys():
 			students = ActiveSession.students_in_class[class_id]
 			if student_id in students:
+				print("Checking Out Student ID: " + str(student_id))
+				print("Reason: " + reason)
 				students.remove(student_id)
 			else:
 				print("Student ID " + str(student_id) + " is not in that class!")

@@ -116,12 +116,15 @@ class ClassRegister(cmd.Cmd):
 		"""Usage: check_in <student_id> <class_id>"""
 		student_id = arg["<student_id>"]
 		class_id = arg["<class_id>"]
-		ActiveSession.check_in_student(int(student_id), int(class_id))
+		print(ActiveSession.check_in_student(int(student_id), int(class_id)))
 
 	@docopt_cmd
 	def do_check_out(self, arg):
 		"""Usage: check_out <student_id> <class_id> <reason>"""
-		pass
+		student_id = arg["<student_id>"]
+		class_id = arg["<class_id>"]
+		reason = arg["<reason>"]
+		ActiveSession.check_out_student(int(student_id), int(class_id), reason)
 
 
 if __name__ == "__main__":
