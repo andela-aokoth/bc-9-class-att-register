@@ -6,10 +6,12 @@ run_cursor = connection.cursor()
 
 
 class ActiveSession(object):
-	# dictionary to store; class_id: start_time
+	# dictionary to store; class_id -> start_time
 	active_classes = {}
-	# dictionary to store students in class; class_id: [list_of_students]
+	# dictionary to store students in class; class_id -> [list_of_students]
 	students_in_class = {}
+
+	class_logs = []
 
 	@staticmethod
 	def start_class(class_id):
@@ -41,7 +43,7 @@ class ActiveSession(object):
 					return "Student ID: " + str(student_id) + " already in a class!"
 			else:
 				ActiveSession.students_in_class[class_id] = [student_id]
-				return "Student ID: " + str(student_id) + " checked in to class " + str(class_id)
+			return "Student ID: " + str(student_id) + " checked in to class " + str(class_id)
 			
 		else:
 			return "Class ID/Student ID" + str(class_id) + "does not exist!"
@@ -64,7 +66,6 @@ class ActiveSession(object):
 	@staticmethod
 	def get_all_classes():
 		all_classes = crud_alchemy.get_all_classes()
-		# print(all_classes)
 		print("\t" + "-"*42)
 		print("\tCLASS ID".ljust(15) + "SUBJECT".ljust(16))
 		print("\t" +"-"*42)
@@ -75,11 +76,10 @@ class ActiveSession(object):
 	@staticmethod
 	def get_active_classes():
 		if not ActiveSession.active_classes.keys():
-			print('\tThere are no active classes!')
+			print('\tThere are currently no active classes!')
 		else:
 			for class_id in ActiveSession.active_classes.keys():
 				class_details = crud_alchemy.get_class_details(class_id)
-				# print(class_details)
 				for class_det in class_details:
 					print("In Session")
 					print("Class -> " + class_det)
@@ -101,6 +101,8 @@ class ActiveSession(object):
 			ActiveSession.active_classes.pop(class_id)
 			print("Class ID -> " + str(class_id) + " ended!")
 			print("End Time: " + end_time)
+		else:
+			print("Class ID: " + str(class_id) + " not in session!")
 
 
 	@staticmethod
@@ -118,7 +120,6 @@ class ActiveSession(object):
 		print("-"*55)
 		for stud_id in all_student_ids:
 			student_details = crud_alchemy.get_student_details(stud_id)
-			# print( student_details[0][1])
 			if stud_id not in student_ids_in_class:
 				print(str(stud_id).ljust(15) \
 					+ student_details[0][0].ljust(15) \
@@ -129,15 +130,3 @@ class ActiveSession(object):
 					+ student_details[0][0].ljust(15) \
 					+ student_details[0][1].ljust(15) \
 					+ "Yes".ljust(15))
-
-
-def main():
-	ActiveSession.get_all_classes() # good
-	ActiveSession.start_class(1) # good
-	ActiveSession.get_active_classes() # good
-	ActiveSession.get_students_in_class()
-
-
-
-if __name__ == '__main__':
-	main()

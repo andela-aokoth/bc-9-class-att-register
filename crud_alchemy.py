@@ -17,7 +17,7 @@ session = DBSession()
 # Functions for students table
 def save_student(firstname, lastname):
 	add_student = Student(first_name=firstname, last_name=lastname)
-	session.commit(add_student)
+	session.commit()
 	return "Student: " + firstname + " " + lastname + " saved!"
 
 def delete_student(student_id):
@@ -52,8 +52,9 @@ def get_all_student_ids():
 
 # Functions for classes table
 def save_class(subject):
+	subject = subject.strip()
 	add_class = Classes(subject=subject)
-	session.commit(add_class)
+	session.commit()
 	return str(subject) + " saved!"
 
 def get_all_classes():
@@ -84,18 +85,3 @@ def get_all_class_ids():
 		class_ids.append(id_row.class_id)
 
 	return class_ids
-
-
-def main():
-	# students = get_all_students()
-	# print(students)
-	# classes = get_all_classes()
-	# print(classes)
-	student_dets = get_class_details(1)
-	print(student_dets)
-
-	student_ids = get_all_class_ids()
-	print(student_ids)
-
-if __name__ == '__main__':
-	main()

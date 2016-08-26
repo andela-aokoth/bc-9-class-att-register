@@ -1,3 +1,8 @@
+import sqlite3, datetime, time
+
+connection = sqlite3.connect("register.db")
+run_cursor = connection.cursor()
+
 class Student(object):
 	def __init__(self, firstname, lastname):
 		self.firstname = firstname
